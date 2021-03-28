@@ -7,6 +7,9 @@ let mapleader = ";" " the pinky thanks u
 " Wrap gitcommit file types at the appropriate length
 filetype indent plugin on
 
+" Python
+let g:python3_host_prog = '$HOME/.pyenv/versions/py3nvim/bin/python'
+
 " Vim Plug auto bootstrap
 if empty(glob('~/.vim/autoload/plug.vim'))
 	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
