@@ -1,4 +1,42 @@
+" good ol' vim settings
 syntax on
+set number " line numbers
+
+let mapleader = ";" " the pinky thanks u
 
 " Wrap gitcommit file types at the appropriate length
 filetype indent plugin on
+
+" Vim Plug auto bootstrap
+if empty(glob('~/.vim/autoload/plug.vim'))
+	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+	 \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" Plugins
+call plug#begin()
+  Plug 'neoclide/coc.nvim', {'branch': 'release'} " intellesense (ac, go-to, rename) LSP must be configured https://github.com/neoclide/coc.nvim 
+  Plug 'preservim/nerdtree' " File tree explorer
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " fuzzy file search, ripgrep, other goodies
+  Plug 'junegunn/fzf.vim'
+  Plug 'vim-airline/vim-airline' " shows tabs and editor status (vim mode, git, etc)
+  Plug 'tpope/vim-surround'
+  Plug 'tpope/vim-fugitive' " git interface
+  Plug 'scrooloose/nerdcommenter' " comment stuff out
+call plug#end()
+
+" CoC Config (it's big)
+source $HOME/.coc.vim
+
+" Nerdtree
+nnoremap <silent><leader>n :NERDTreeToggle<cr>
+let g:NERDTreeIgnore = ['^node_modules$']
+
+" Airline Config - Show tabs with numbers
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+
+" FZF hot keys
+nnoremap <silent> <leader>f :FZF<cr>
+nnoremap <silent> <leader>r :Rg<cr>

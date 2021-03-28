@@ -1,7 +1,4 @@
-if test ! $(which spoof)
+if test ! $(which node)
 then
-  if test $(which npm)
-  then
-    sudo npm install spoof -g
-  fi
+	brew install node
 fi

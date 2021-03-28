@@ -27,11 +27,11 @@ git_dirty() {
   fi
 }
 
-git_prompt_info () {
- ref=$($git symbolic-ref HEAD 2>/dev/null) || return
-# echo "(%{\e[0;33m%}${ref#refs/heads/}%{\e[0m%})"
- echo "${ref#refs/heads/}"
-}
+# git_prompt_info () {
+#  ref=$($git symbolic-ref HEAD 2>/dev/null) || return
+#  echo "(%{\e[0;33m%}${ref#refs/heads/}%{\e[0m%})"
+#  echo "${ref#refs/heads/}"
+# }
 
 # This assumes that you always have an origin named `origin`, and that you only
 # care about one specific origin. If this is not the case, you might want to use
@@ -62,16 +62,16 @@ battery_status() {
 
   if [[ $(sysctl -n hw.model) == *"Book"* ]]
   then
-    $ZSH/bin/battery-status
+    $DOTFILES/bin/battery-status
   fi
 }
 
-export PROMPT=$'\n$(battery_status)in $(directory_name) $(git_dirty)$(need_push)\n› '
-set_prompt () {
-  export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
-}
+#export PROMPT=$'\n$(battery_status) in $(directory_name) $(git_dirty)$(need_push) › '
+#set_prompt () {
+#	export RPROMPT="%{$fg_bold[cyan]%}%{$reset_color%}"
+#}
 
-precmd() {
-  title "zsh" "%m" "%55<...<%~"
-  set_prompt
-}
+# precmd() {
+#   title "zsh" "%m" "%55<...<%~"
+#   set_prompt
+# }
