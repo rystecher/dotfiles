@@ -4,6 +4,9 @@ set number " line numbers
 
 let mapleader = ";" " the pinky thanks u
 
+" esc in insert mode
+inoremap jk <esc>
+
 " Wrap gitcommit file types at the appropriate length
 filetype indent plugin on
 
