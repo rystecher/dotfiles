@@ -1,0 +1,60 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+# Macos
+# Always open everything in Finder's list view. This is important.
+defaults write com.apple.Finder FXPreferredViewStyle Nlsv
+
+# Show the ~/Library folder.
+chflags nohidden ~/Library
+
+# Set a really fast key repeat.
+defaults write NSGlobalDomain KeyRepeat -int 1
+
+# zsh
+if ! [[ -d ~/.oh-my-zsh ]]
+then
+    echo "  Installing Oh My Zsh..."
+    sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+else
+    echo "Oh My Zsh already installed."
+fi
+
+# Homebrew
+if test ! $(which brew)
+then
+  echo "  Installing Homebrew for you."
+
+  # Install the correct homebrew for each OS type
+  if test "$(uname)" = "Darwin"
+  then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  elif test "$(expr substr $(uname -s) 1 5)" = "Linux"
+  then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install)"
+  fi
+fi
+
+# brew
+brew bundle --no-lock --file=/dev/stdin <<EOF
+brew "nvim"
+brew "git"
+cask "firefox"
+
+brew "node"
+
+brew "pyenv"
+brew "pyenv-virtualenv"
+
+brew "rbenv"
+EOF
+
+# Python
+if test ! $(which pyenv)
+then
+	pyenv install 3.9.2
+	pyenv virtualenv 3.9.2 py3nvim
+	pyenvactivate py3nvim
+	pip install pynvim
+fi
+{{ end -}}
