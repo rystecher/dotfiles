@@ -1,4 +1,9 @@
-tap "homebrew/cask-fonts"
+# Testing
+brew "atuin"
+brew "glow"
+brew "duf"
+brew "dust"
+brew "btop"
 
 # OS
 brew "bash"
@@ -14,10 +19,12 @@ brew "rcm"
 brew "reattach-to-user-namespace"
 brew "ripgrep"
 brew "rga" # ripgrep-all
+brew "starship"
 brew "tmux"
 brew "watchman"
 brew "zoxide"
 brew "zsh"
+brew "zsh-autosuggestions"
 cask "qlmarkdown"
 cask "qlstephen"
 cask "font-hack-nerd-font"

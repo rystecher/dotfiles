@@ -17,10 +17,38 @@ alias podman-remove-stopped='podman rm $(podman ps -qa)'
 alias podman-gc='podman system prune --volumes'
 
 # git
+alias ga='git add'
+alias gaa='git add --all'
 alias gco='git checkout'
+alias gc='git commit --verbose'
+alias gcmsg='git commit --message'
 alias gst='git status'
 alias gupc='git pull --rebase && git-delete-merged'
-alias ggpush='git push origin "$(git_current_branch)"'
+alias gb='git branch'
+alias gcb='git checkout -b'
+alias gcB='git checkout -B'
+alias gba='git branch --all'
+alias gbd='git branch --delete'
+alias gbD='git branch --delete --force'
+
+function ggl() {
+  if [[ "$#" != 0 ]] && [[ "$#" != 1 ]]; then
+    git pull origin "${*}"
+  else
+    [[ "$#" == 0 ]] && local b="$(git_current_branch)"
+    git pull origin "${b:=$1}"
+  fi
+}
+
+function ggp() {
+  if [[ "$#" != 0 ]] && [[ "$#" != 1 ]]; then
+    git push origin "${*}"
+  else
+    [[ "$#" == 0 ]] && local b="$(git_current_branch)"
+    git push origin "${b:=$1}"
+  fi
+}
+alias ggp='git push origin "$(git_current_branch)"'
 
 # rg
 alias rg='rg --hidden'

@@ -1,5 +1,9 @@
 export PATH="$HOME/.bin:$HOME/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
 
+# Homebrew
+export PATH="/opt/homebrew/sbin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
+
 if [[ -d "$HOME/.workbin" ]]; then
   export PATH="$HOME/.workbin:$PATH"
 fi
