@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+
+# Script to set up or update a Mac from scratch
+
+# ----------------------------------------------------------------------------
+# Functions
+# ----------------------------------------------------------------------------
+
+reset="\\e[0m"
+red="\\e[0;31m"
+green="\\e[0;32m"
+yellow="\\e[0;33m"
+cyan="\\e[0;36m"
+white="\\e[0;37m"
+
+fancy_echo() {
+  local color=${2:-$cyan}
+  local fmt="$color$1$reset"; shift
+
+  # shellcheck disable=SC2059
+  printf "\\n$fmt\\n" "$@"
+}
+
+gem_install_or_update() {
+  if gem list "$1" --installed > /dev/null; then
+    gem update "$@"
+  else
+    gem install "$@"
+  fi
+}
+
+# Stop execution if a command errors
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Determine Homebrew prefix
+arch="$(uname -m)"
+if [ "$arch" = "arm64" ]; then
+  HOMEBREW_PREFIX="/opt/homebrew"
+else
+  HOMEBREW_PREFIX="/usr/local"
+fi
+
+# ----------------------------------------------------------------------------
+# Terminal
+# ----------------------------------------------------------------------------
+
+if [ ! -d "$HOME/.oh-my-zsh/" ]; then
+  fancy_echo "Installing oh-my-zsh..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+fi
+
+if [ ! -d "$HOME/.bin/" ]; then
+  mkdir "$HOME/.bin"
+fi
+
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  fancy_echo "Installing Tmux Plugin Manager"
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
+# ----------------------------------------------------------------------------
+# Homebrew
+# ----------------------------------------------------------------------------
+
+if ! command -v brew >/dev/null; then
+  # https://brew.sh/
+  fancy_echo "Installing Homebrew ..."
+
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  export PATH="$HOMEBREW_PREFIX/bin:$PATH"
+fi
+
+if brew list | grep -Fq brew-cask; then
+  fancy_echo "Uninstalling old Homebrew-Cask ..."
+  brew uninstall --force brew-cask
+fi
+
+fancy_echo "Updating Homebrew formulae ..."
+brew update
+brew bundle --file="$DIR/../Brewfile"
+
+# ----------------------------------------------------------------------------
+# Programming languages
+# ----------------------------------------------------------------------------
+
+fancy_echo "Installing latest ruby..."
+mise install ruby@latest
+gem update --system
+gem_install_or_update 'bundler'
+number_of_cores=$(sysctl -n hw.ncpu)
+bundle config --global jobs $((number_of_cores - 1))
+
+fancy_echo "Installing latest node..."
+mise install nodejs@latest
+
+fancy_echo "Installing latest Python ..."
+mise install python@latest
+
+# ----------------------------------------------------------------------------
+# Dotfiles setup
+# ----------------------------------------------------------------------------
+
+fancy_echo "Installing dotfiles..."
+env RCRC="$HOME/dotfiles/rcrc" rcup
+
+# ----------------------------------------------------------------------------
+# VIM
+# ----------------------------------------------------------------------------
+
+if [ ! -d "$HOME/.vim/undo/" ]; then
+  fancy_echo "Creating ~/.vim/undo"
+  mkdir -p ~/.vim/undo
+fi
+
+if [ ! -d "$HOME/.vim/swap/" ]; then
+  fancy_echo "Creating ~/.vim/swap"
+  mkdir -p ~/.vim/swap
+fi
+
+if [ ! -d "$HOME/.vim/backup/" ]; then
+  fancy_echo "Creating ~/.vim/backup"
+  mkdir -p ~/.vim/backup
+fi
+
+fancy_echo "Symlinking things for neovim"
+mkdir -p "$HOME/.config"
+ln -s ~/.vim "$HOME/.config/nvim"
+ln -s ~/.vimrc "$HOME/.config/nvim/init.vim"
+
+# ----------------------------------------------------------------------------
+# System settings
+# ----------------------------------------------------------------------------
+
+if [ "$(defaults read com.apple.finder AppleShowAllFiles)" != "YES" ] ; then
+  fancy_echo "Setting terminal to show all files"
+  defaults write com.apple.finder AppleShowAllFiles YES
+  killall Finder
+fi
+
+if [ "$(defaults read com.apple.desktopservices DSDontWriteNetworkStores)" != "1" ] ; then
+  fancy_echo "Disabling storage of invisible files on network stores"
+  defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+fi
+
+fancy_echo "Success!" "$green"
+
+fancy_echo "Next steps:
+  - Set GIT_NAME, GIT_EMAIL, HOME_EMAIL in .env in this folder
+  - Fill in the following in ~/.gitconfig.local:
+    [user]
+      name =
+      email =
+"

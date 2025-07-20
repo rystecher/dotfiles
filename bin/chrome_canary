@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+CHROME_DIR="${HOME}/Chrome"
+CHROME_CANARY="${CHROME_DIR}/Google Chrome Canary.app"
+
+if [ ! -d "$CHROME_CANARY" ]; then
+  echo "Chrome canary not installed at '${CHROME_CANARY}'"
+  exit 1
+fi
+
+"${CHROME_CANARY}/Contents/MacOS/Google Chrome Canary" --user-data-dir="${CHROME_DIR}/chromecanaryprofile"

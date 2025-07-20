@@ -1,0 +1,17 @@
+.DS_Store
+*.sw[nop]
+.bundle
+.byebug_history
+db/*.sqlite3
+log/*.log
+rerun.txt
+tags
+!tags/
+tags.lock
+tags.temp
+tmp/**/*
+!tmp/cache/.keep
+*.pyc
+.bash_history
+.python_history
+.vim
