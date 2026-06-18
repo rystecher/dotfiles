@@ -27,8 +27,8 @@ Run `rcup` after adding new files to the directory to properly symlink them.
   * App Expose: Down w/ 4 fingers
 
 * Terminal
-  * [Dracula](https://draculatheme.com/) color theme
-  * Use option as Meta key
+  * [Ghostty](https://ghostty.org/), configured via `config/ghostty/config`
+  * Earthsong color theme, font size 13
 
 ## Acknowledgements
 
